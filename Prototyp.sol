@@ -4,7 +4,7 @@ contract Prototyp {
     function Prototyp(){
 
 
-//Test 2
+//Test 23
 
     }
 }
