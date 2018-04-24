@@ -1,17 +1,30 @@
 pragma solidity ^0.4.0;
 
+pragma solidity ^0.4.2;
+
 contract Prototyp {
-    string[][] moves;
 
-    function setMove(uint from, unit to, bool end){
-        for(uint i = 0; bool == false; i++){
+    /*      struct Move {     //   function addtoarray(Move a) noch nicht moeglich?
+              uint fromX;
+              uint fromY;
+              uint toX;
+              uint toY;
+      }
+      Move[]  moves = new Move[](8);
 
-            moves[i][0] = from;
-            moves[i][1] = to;
+      */
 
-        }
+    uint[] moves = new uint[](8);    // TODO: Arrays variabler laenge? nicht moeglich? matrizen nicht moeglich?
+
+
+    function addtoarray(uint fromX, uint fromY, uint toX, uint toY) public payable {
+
+        moves[1] = fromX;
+        moves[2] = fromY;
+        moves[3] = toX;
+        moves[4] = toY;
+
     }
-
     //TODO: getMoves (Replay, Saves)
-
 }
+
