@@ -1,0 +1,42 @@
+pragma solidity ^0.4.23;
+
+
+contract Prototyp {
+    
+    uint counter = 0;                                                           //muss nach jedem Spiel resettet werden
+        
+    struct Move 
+    {   
+        uint fromX;
+        uint fromY;
+        uint toX;
+        uint toY;
+    }
+      
+    Move[] moves  = new Move[](100); 
+    
+    function createNewGame () public
+    {
+              // Moves array?
+    }
+
+    function addtoArray(uint fromX, uint fromY, uint toX, uint toY) public{     //Memory ist teuer, alle Züge auf einmal Speichern, ansonsten memory und dann zu Storage!
+
+        Move memory move;
+        move.toY = toY;
+        move.toX = toX;
+        move.fromX = fromX;
+        move.fromY = fromY;
+        
+        moves[0]  = move;
+        
+        counter = counter + 1;
+
+    }
+    
+    //TODO: getMoves (Replay, Saves)
+}
+
+
+// -> UnimplementedFeatureError: Copying of type struct Prototyp.Move memory[] memory to storage not yet supported.
+
