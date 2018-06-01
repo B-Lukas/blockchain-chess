@@ -1,0 +1,28 @@
+pragma solidity ^0.4.2;
+
+contract Prototyp {
+    
+    struct Move{
+        uint _gameId;
+        uint8 fromX;
+        uint8 fromY;
+        uint8 toX;
+        uint8 toY;
+    }
+    
+    Move testMove;
+    
+    mapping (uint => address) public Spieler;
+    
+    Move[] moves;
+
+    function addToArray(uint _gameId, uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) public  {
+        
+
+         moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));
+
+    }
+ 
+    //TODO: getMoves (Replay, Saves,)
+}
+
