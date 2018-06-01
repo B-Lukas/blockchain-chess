@@ -1,8 +1,4 @@
-pragma solidity ^0.4.2;
-
-contract Prototyp {
-    
-    struct Move{
+ struct Move{
         uint _gameId;
         uint8 fromX;
         uint8 fromY;
@@ -10,19 +6,34 @@ contract Prototyp {
         uint8 toY;
     }
     
+     struct Games{
+         uint _gameId;
+         Move[] moves;
+
+    }
+    
+    
+    
     Move testMove;
     
     mapping (uint => address) public Spieler;
     
+    mapping (uint => Move[]) public MovetoGame;   //CryptoZombie anschauen
+
     Move[] moves;
+    
+    Games[] games;
 
     function addToArray(uint _gameId, uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) public  {
         
-
-         moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));
+            moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));
 
     }
+    
+    function movesIntoArray(){
+        
+    }
+    
  
     //TODO: getMoves (Replay, Saves,)
 }
-
