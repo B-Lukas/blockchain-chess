@@ -2,7 +2,9 @@
 
 contract Prototyp {
     
-    uint counter = 0;
+    //TODO: Ownable
+    //TODO: function Wetteinsatz
+    
     
     struct Move{
         uint gameId;
@@ -13,7 +15,9 @@ contract Prototyp {
     }
     
     Move[] moves;
-    mapping (uint => uint) internal gameMoveCount;                            //Wieviele Spielzüge hat eine Spiel(= gameId)
+    mapping (uint => uint) internal gameMoveCount;    
+    //Wieviele Spielzüge hat eine Spiel(= gameId)
+    
 
     //Hardgecodete Walletadressen, da mehrere User irrelevant
     address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;   //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
@@ -25,35 +29,33 @@ contract Prototyp {
             
             /*Andere Varriante unten dran, teuerer!
             
-            testarray.push(_fromX);
+            testarray.push(_fromX);                      
             testarray.push(_fromY);
-            testarray.push(_toX);                                           //cost ~160k Gas :(
+            testarray.push(_toX);                                           //cost ~160k Gas :(   -> 40k pro push
             testarray.push(_toY);
             
-            Andere Varriante Ende*/
+            //Andere Varriante Ende */
             
             //Der Counter, wieviele Züge ein Spiel hat, wird erhöht
             gameMoveCount[_gameId]++;
     }
     
-    
-    //TODO: function Wetteinsatz
 
     
     //Function gibt alle Moves eines Spiels(_gameId) wieder
-     function getMoves(uint _gameId) external view returns(uint[]) {        //sollte kein Gas kosten, da view function + called external
+     function getMoves(uint _gameId) external view returns(uint[]) {        //sollte kein Gas kosten, da view function + called external "(Cost only applies when called by a contract)"
          
         uint[] memory result = new uint[]((gameMoveCount[_gameId]*4));      //*4, da ein Move aus 4 uint Werten besteht!
-            uint resultcounter = 0;
+            uint counter = 0;
             
          for (uint i = 0; i < moves.length; i++) {                          //evtl. Array rückwärts durchsuchen, da wahrscheinlichkeit geringer, das älteres Spiel angeschaut, weitergespielt wird.
                 if(moves[i].gameId == _gameId){  
                                                                             //Mit Mapping nach max Anzahl an Spielzügen schauen, um Hardwarelast zu verringern oder das GESAMTE Array durchsuchen und dadurch das Mappung einsparen? //Zuge wären chronologisch rückwärts!
-                    result[resultcounter] = moves[i].fromX;
-                    result[resultcounter + 1] = moves[i].fromY;
-                    result[resultcounter + 2] = moves[i].toX;               //CALL BY REFERENCE :(      Züge im Call einbauen?
-                    result[resultcounter + 3] = moves[i].toY;
-                    resultcounter + 4;
+                    result[counter] = moves[i].fromX;
+                    result[counter + 1] = moves[i].fromY;
+                    result[counter + 2] = moves[i].toX;               //ERROR
+                    result[counter + 3] = moves[i].toY;
+                    counter = counter + 4;
                 }
         
      }
@@ -73,10 +75,17 @@ contract Prototyp {
         
         -> Ein Zug ist immer in 4 Werten dargestellt!
         */
+    }
+    
+         //HIER FOLGEN DEBUGGING METOHDEN:
+     
+    function getMapping(uint _gameId) public view returns (uint){
         
+        return (gameMoveCount[_gameId]);
         
     }
     
  
     //TODO: getMoves (Replay, Saves,)
 }
+
