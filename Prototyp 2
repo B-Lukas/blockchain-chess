@@ -1,4 +1,10 @@
- struct Move{
+ pragma solidity ^0.4.2;
+
+contract Prototyp {
+    
+    uint counter = 0;
+    
+    struct Move{
         uint _gameId;
         uint8 fromX;
         uint8 fromY;
@@ -6,31 +12,68 @@
         uint8 toY;
     }
     
-     struct Games{
-         uint _gameId;
-         Move[] moves;
-
-    }
-    
-    
-    
-    Move testMove;
-    
-    mapping (uint => address) public Spieler;
-    
-    mapping (uint => Move[]) public MovetoGame;   //CryptoZombie anschauen
-
     Move[] moves;
+    mapping (uint => uint) public gameMoveCount;                             //Wieviele Spielzüge hat eine Spiel(= gameId)
+
+    //Hardgecodete Walletadressen, da mehrere User irrelevant
+    address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;   //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
     
-    Games[] games;
-
     function addToArray(uint _gameId, uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) public  {
-        
-            moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));
-
+            
+            //der aktuelle Spielzug wird dem moves array hinzugefügt
+            moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));          //cost ~120k Gas :/
+            
+            /*Andere Varriante unten dran, teuerer!
+            
+            testarray.push(_fromX);
+            testarray.push(_fromY);
+            testarray.push(_toX);                                           //cost ~160k Gas :(
+            testarray.push(_toY);
+            
+            Andere Varriante Ende*/
+            
+            //Der Counter, wieviele Züge ein Spiel hat, wird erhöht
+            gameMoveCount[_gameId]++;
     }
     
-    function movesIntoArray(){
+    
+    //TODO: function Wetteinsatz
+
+    
+    //Function gibt alle Moves eines Spiels(_gameId) wieder
+     function getMoves(uint _gameId) external view returns(uint[]) {        //sollte kein Gas kosten, da view function + called external
+         
+        uint[] memory result = new uint[]((gameMoveCount[_gameId]*4));      //*4, da ein Move aus 4 uint Werten besteht!
+            uint resultcounter = 0;
+            
+         for (uint i = 0; i < moves.length; i++) {                          //evtl. Array rückwärts durchsuchen, da wahrscheinlichkeit geringer, das älteres Spiel angeschaut, weitergespielt wird.
+                if(moves[i]._gameId == _gameId){  
+                                                                            //Mit Mapping nach max Anzahl an Spielzügen schauen, um Hardwarelast zu verringern oder das GESAMTE Array durchsuchen und dadurch das Mappung einsparen? //Zuge wären chronologisch rückwärts!
+                    result[resultcounter] = moves[i].fromX;
+                    result[resultcounter + 1] = moves[i].fromY;
+                    result[resultcounter + 2] = moves[i].toX;
+                    result[resultcounter + 3] = moves[i].toY;
+                    resultcounter + 4;
+                }
+        
+     }
+        return result;      
+        /*return von Result:
+        result[0] = fromX1,
+        result[1] = fromY1,
+        result[2] = toX1,
+        result[3] = toY1,
+        result[4] = fromX2,
+        result[5] = fromY2,
+        result[6] = toX2,
+        result[7] = toY2,
+        result[8] = fromX3,
+        result[9] = fromY3,
+        usw.
+        
+        -> Ein Zug ist immer in 4 Werten dargestellt!
+        */
+        
         
     }
     
