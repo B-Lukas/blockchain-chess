@@ -5,7 +5,7 @@ contract Prototyp {
     uint counter = 0;
     
     struct Move{
-        uint _gameId;
+        uint gameId;
         uint8 fromX;
         uint8 fromY;
         uint8 toX;
@@ -13,7 +13,7 @@ contract Prototyp {
     }
     
     Move[] moves;
-    mapping (uint => uint) public gameMoveCount;                             //Wieviele Spielzüge hat eine Spiel(= gameId)
+    mapping (uint => uint) internal gameMoveCount;                            //Wieviele Spielzüge hat eine Spiel(= gameId)
 
     //Hardgecodete Walletadressen, da mehrere User irrelevant
     address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;   //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
@@ -47,11 +47,11 @@ contract Prototyp {
             uint resultcounter = 0;
             
          for (uint i = 0; i < moves.length; i++) {                          //evtl. Array rückwärts durchsuchen, da wahrscheinlichkeit geringer, das älteres Spiel angeschaut, weitergespielt wird.
-                if(moves[i]._gameId == _gameId){  
+                if(moves[i].gameId == _gameId){  
                                                                             //Mit Mapping nach max Anzahl an Spielzügen schauen, um Hardwarelast zu verringern oder das GESAMTE Array durchsuchen und dadurch das Mappung einsparen? //Zuge wären chronologisch rückwärts!
                     result[resultcounter] = moves[i].fromX;
                     result[resultcounter + 1] = moves[i].fromY;
-                    result[resultcounter + 2] = moves[i].toX;
+                    result[resultcounter + 2] = moves[i].toX;               //CALL BY REFERENCE :(      Züge im Call einbauen?
                     result[resultcounter + 3] = moves[i].toY;
                     resultcounter + 4;
                 }
