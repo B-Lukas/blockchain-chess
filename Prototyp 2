@@ -1,10 +1,9 @@
- pragma solidity ^0.4.2;
+pragma solidity ^0.4.2;
 
-contract Prototyp {
-    
-    //TODO: Ownable
+import "./Ownable.sol";
+contract Prototyp2 is Ownable{
+
     //TODO: function Wetteinsatz
-    
     
     struct Move{
         uint gameId;
@@ -20,18 +19,18 @@ contract Prototyp {
     
 
     //Hardgecodete Walletadressen, da mehrere User irrelevant
-    address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;   //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
+    address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;           //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
     
-    function addToArray(uint _gameId, uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) public  {
+    function addToArray(uint _gameId, uint8 _fromX, uint8 _fromY, uint8 _toX, uint8 _toY) onlyOwner public  {
             
             //der aktuelle Spielzug wird dem moves array hinzugefügt
-            moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));          //cost ~120k Gas :/
+            moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));                  //cost ~120k Gas :/
             
             /*Andere Varriante unten dran, teuerer!
             
             testarray.push(_fromX);                      
             testarray.push(_fromY);
-            testarray.push(_toX);                                           //cost ~160k Gas :(   -> 40k pro push
+            testarray.push(_toX);                                                   //cost ~160k Gas :(   -> 40k pro push
             testarray.push(_toY);
             
             //Andere Varriante Ende */
@@ -43,14 +42,14 @@ contract Prototyp {
 
     
     //Function gibt alle Moves eines Spiels(_gameId) wieder
-     function getMoves(uint _gameId) external view returns(uint[]) {        //sollte kein Gas kosten, da view function + called external "(Cost only applies when called by a contract)"
+     function getMoves(uint _gameId) onlyOwner external view returns(uint[]) {      //sollte kein Gas kosten, da view function + called external "(Cost only applies when called by a contract)"
          
-        uint[] memory result = new uint[]((gameMoveCount[_gameId]*4));      //*4, da ein Move aus 4 uint Werten besteht!
+        uint[] memory result = new uint[]((gameMoveCount[_gameId]*4));              //*4, da ein Move aus 4 uint Werten besteht!
             uint counter = 0;
             
-         for (uint i = 0; i < moves.length; i++) {                          //evtl. Array rückwärts durchsuchen, da wahrscheinlichkeit geringer, das älteres Spiel angeschaut, weitergespielt wird.
+         for (uint i = 0; i < moves.length; i++) {                                  //evtl. Array rückwärts durchsuchen, da wahrscheinlichkeit geringer, das älteres Spiel angeschaut, weitergespielt wird.
                 if(moves[i].gameId == _gameId){  
-                                                                            //Mit Mapping nach max Anzahl an Spielzügen schauen, um Hardwarelast zu verringern oder das GESAMTE Array durchsuchen und dadurch das Mappung einsparen? //Zuge wären chronologisch rückwärts!
+                                                                                    //Mit Mapping nach max Anzahl an Spielzügen schauen, um Hardwarelast zu verringern oder das GESAMTE Array durchsuchen und dadurch das Mappung einsparen? //Zuge wären chronologisch rückwärts!
                     result[counter] = moves[i].fromX;
                     result[counter + 1] = moves[i].fromY;
                     result[counter + 2] = moves[i].toX;               //ERROR
@@ -88,4 +87,3 @@ contract Prototyp {
  
     //TODO: getMoves (Replay, Saves,)
 }
-
