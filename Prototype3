@@ -1,0 +1,69 @@
+pragma solidity ^0.4.2;
+
+import "./Ownable.sol";
+contract Prototyp2 is Ownable{
+
+    //TODO: function Wetteinsatz
+    
+   // Move[] moves;
+    mapping (uint => uint) internal gameMoveCount;    
+    //Wieviele Spielzüge hat eine Spiel(= gameId)
+    
+
+    //Hardgecodete Walletadressen, da mehrere User irrelevant
+    address contractAddress = 0x1a1B4e3201DE6a1352602E0a1eE0fC9431866891;           //Lukas MetaMask Adresse bzw. MetaMask Adresse des SmartContracts
+    
+    uint[][] zuege;
+    
+    function addToGames(uint[] websiteMoves) onlyOwner public  {
+            
+            //der aktuelle Spielzug wird dem moves array hinzugefügt
+            //moves.push(Move(_gameId, _fromX, _fromY, _toX, _toY));                  //cost ~120k Gas :/
+            
+            zuege.push(websiteMoves);
+        
+            /*Andere Varriante unten dran, teuerer!
+            
+            testarray.push(_fromX);                      
+            testarray.push(_fromY);
+            testarray.push(_toX);                                                   //cost ~160k Gas :(   -> 40k pro push
+            testarray.push(_toY);
+            
+            //Andere Varriante Ende */
+            
+            //Der Counter, wieviele Züge ein Spiel hat, wird erhöht
+            //gameMoveCount[_gameId]++;
+    }
+    
+
+    
+    //Function gibt alle Moves eines Spiels(_gameId) wieder
+     function getMoves(uint _gameId) onlyOwner external view returns(uint[]) {      //sollte kein Gas kosten, da view function + called external "(Cost only applies when called by a contract)"
+         
+        uint[] memory result = new uint[]((zuege[_gameId].length));              //*4, da ein Move aus 4 uint Werten besteht!
+            
+                    result = zuege[_gameId];
+                
+        
+        return result;     
+        /*return von Result:
+        result[0] = fromX1,
+        result[1] = fromY1,
+        result[2] = toX1,
+        result[3] = toY1,
+        result[4] = fromX2,
+        result[5] = fromY2,
+        result[6] = toX2,
+        result[7] = toY2,
+        result[8] = fromX3,
+        result[9] = fromY3,
+        usw.
+        
+        -> Ein Zug ist immer in 4 Werten dargestellt!
+        */
+    }
+    
+         //HIER FOLGEN DEBUGGING METOHDEN:
+
+}
+    //TODO: getMoves (Replay, Saves,)
