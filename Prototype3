@@ -40,7 +40,7 @@ contract Prototyp2 is Ownable{
     //Function gibt alle Moves eines Spiels(_gameId) wieder
      function getMoves(uint _gameId) onlyOwner external view returns(uint[]) {      //sollte kein Gas kosten, da view function + called external "(Cost only applies when called by a contract)"
          
-        uint[] memory result = new uint[]((zuege[_gameId].length));              //*4, da ein Move aus 4 uint Werten besteht!
+        uint[] memory result = new uint[]((zuege[_gameId].length));            // ~ 20k gas Price per move
             
                     result = zuege[_gameId];
                 
