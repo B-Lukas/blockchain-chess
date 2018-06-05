@@ -1,0 +1,82 @@
+pragma solidity ^0.4.2;
+
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol"; //Working??
+
+contract OnchainLogicChess is Ownable{
+    
+    struct King{
+        bool color;
+        uint8 xPosition;
+        uint8 yPosition;
+    }
+    
+    struct Queen{
+        bool color;
+        uint8 xPosition;
+        uint8 yPosition;
+    }
+    
+    struct Rook{
+        bool color;
+        uint8 xPosition;
+        uint8 yPosition;
+    }
+    
+    struct Knight{
+        bool color;
+        uint8 xPosition;
+        uint8 yPosition;
+    }
+    
+    struct Bishop{
+        bool color;
+        uint8 xPosition;
+        uint8 yPosition;
+    }
+    
+    King whiteKing = King(true, 1, 5);
+    King blackKing = King(false, 8, 5);
+    
+    Queen whiteQueen = Queen(true, 1, 4);
+    Queen blackQueen = Queen(false, 8, 4);
+    
+    Rook whiteRook = RookL(true, 1, 1);
+    Rook blackRook = RookL(false, 8, 1);
+    
+    Rook whiteRook = RookR(true, 1, 8);
+    Rook blackRook = RookR(false, 8, 8);
+    
+    //TODO: Fortführen
+    
+    Knight whiteKnight = Knight(true, 1, 2);
+    Knight blackKnight = Knight(false, 8, 2);
+    
+    Knight whiteKnight = Knight(true, 1, 2);
+    Knight blackKnight = Knight(false, 8, 2);
+    
+    Bishop whiteBishop = Bishop(true, 1, );
+    Bishop blackBishop = Bishop(false, 8, );
+    
+    Bishop whiteBishop = Bishop(true, 1, );
+    Bishop blackBishop = Bishop(false, 8, );
+    
+    //Diagonal beim Schlagen
+    
+    function startGame() public {
+        
+        
+        
+    }
+    
+    /*
+    function validateAndMove(_fromX, fromY, toX, toY) returns (bool){
+        
+        
+        return true;
+        
+    }
+
+    */
+    
+    
+}
