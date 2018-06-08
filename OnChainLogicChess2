@@ -36,7 +36,7 @@ function startGame() public returns(int[64]){ //800k Gas to initialize Game
 
 //TODO Alles Postionen des Schachfeldes nur noch als Index?
 
-function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern) returns(bool){
+function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern) public returns(bool){
 
 /*  _movePattern
         8 = forward
@@ -44,18 +44,37 @@ function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern) 
         9 = skewed right
 */
     bool clear = true;
+    int i;
     
-    // Extra fuer WeißerBauer
-    if(_figure == 6) 
-    for(int i = _startPos + _movePattern;i <= _endPos; i = i + _movePattern){
+    // Extra fuer WeißerBauer, wenn er sich bewegt
+    if(_figure == 6 && _movePattern == 8){
+        for(i = _startPos + _movePattern;i <= _endPos; i = i + _movePattern){
         
-        if(standardBoard[uint(i)] > 0 || standardBoard[uint(i)] < 0 ){
+            if(standardBoard[uint(i)] > 0 || standardBoard[uint(i)] < 0 ){
                 clear = false;
             }
         }
         return clear;
     }
-    
+    // Extra fuer WeißerBauer, wenn er schlägt
+    if(_figure == 6 && _movePattern == 7 || _movePattern == 9){
+            if(standardBoard[uint(_endPos)] == 0 || standardBoard[uint(_endPos)] > 0 ){
+                clear = false;
+            }
+        return clear;
+    }
+    //Extra für WeißerBauer, wenn er 2 Schritte macht von seiner Startposition
+    if(_figure == 6 && _endPos - _startPos == 16){
+        //Wenn das Feld vor dem Bauern und das Zielfeld frei sind: true
+       if(standardBoard[uint(_startPos + _movePattern)] == 0 && standardBoard[uint(_endPos)] == 0){
+           return clear;
+       }
+       else{
+           return false;
+       }
+    }
+}
+
 function legitMove(int _figure, int _oldIndex, int _newIndex)  public returns(bool){
     
     if(_figure == 6){       //Weißer Bauer
