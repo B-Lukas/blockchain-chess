@@ -85,5 +85,5 @@ contract Prototyp2 is Ownable{
     }
     
  
-    //TODO: getMoves (Replay, Saves,)
+    //TODO:(Replay, Saves ?)
 }
