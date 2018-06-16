@@ -1,15 +1,8 @@
 pragma solidity ^0.4.2;
 
-
-//TODO: Ownable, Wetten, Ein Integer als Speicher
-
-
 contract Figures{
     
 string[] Moves;
-int[64] currentBoarduint;
-
-
 int[64]standardBoard;
 
 function startGame() public returns(int[64]){ //800k Gas to initialize Game
@@ -36,9 +29,222 @@ function startGame() public returns(int[64]){ //800k Gas to initialize Game
     return standardBoard;
 }
 
-//TODO Alles Postionen des Schachfeldes nur noch als Index?
+//TODO: Schachfeld als Bitfolge speichern
+//TODO: isPathClear implementieren in skewedMovment und verticalMovement
+//TODO: Zuege speichern
+//TODO: Endfelder z.B. beim Läufer
 
-function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern) public returns(bool){
+//TODO: Input nur zwischen 0-63 gültig
+
+//Überprüft, ob eine Figur zwischen Start- und Zielfeld steht
+function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+    bool clear = true;
+    int i;
+    
+     for(i = _startPos + _movePattern; i != _endPos; i = i + _movePattern){
+        if(clear == false){
+        return false;
+        }
+        //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
+        if(_figure > 0 && standardBoard[uint(i)] > 0){
+        //Sofortige invalidierung
+        return false;
+        }
+        //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
+        if(_figure < 0 && standardBoard[uint(i)] < 0){ 
+        //Sofortiger invalidierung
+        return false;
+        }
+        //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
+        if(_figure > 0 && standardBoard[uint(i)] < 0){
+        clear == false;
+        }
+        //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
+        if(_figure < 0 && standardBoard[uint(i)] > 0){
+        clear == false;
+        }
+    }
+    return true;
+}
+
+
+function horizontalMovement(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+    
+    if(_startPos >= 0 && _startPos <= 7){
+              
+                //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+                if(_endPos >= 8){
+                return false;
+                }
+              
+                if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+                }
+                else{
+                return false;
+                }
+              
+              
+            }
+          
+        if(_startPos >= 8 && _startPos <= 15){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 8 &&_endPos > 15){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }    
+        if(_startPos >= 16 && _startPos <= 23){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 16 &&_endPos > 23){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }         
+        if(_startPos >= 24 && _startPos <= 31){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 24 &&_endPos > 31){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }                    
+        if(_startPos >= 32 && _startPos <= 39){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 32 &&_endPos > 39){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }  
+        if(_startPos >= 40 && _startPos <= 47){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 40 &&_endPos > 47){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }           
+        if(_startPos >= 48 && _startPos <= 55){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 48 &&_endPos > 55){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }              
+        if(_startPos >= 56 && _startPos <= 63){
+            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
+            if(_startPos < 56 &&_endPos > 63){
+                return false;
+              }
+              
+              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
+                return true;
+              }
+              else{
+                return false;
+              } 
+        }
+    
+}
+
+function verticalMovement(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+    
+    bool clear = true;
+    int i;
+    
+    //TODO: Implement isPathClear
+                for(i = _startPos + _movePattern; i <= _endPos; i = i + _movePattern){
+                    if(clear == false){
+                    return false;
+                    }
+                    //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
+                    if(_figure > 0 && standardBoard[uint(i)] > 0){
+                    //Sofortige invalidierung
+                    return false;
+                    }
+                    //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
+                     if(_figure < 0 && standardBoard[uint(i)] < 0){ 
+                    //Sofortiger invalidierung
+                    return false;
+                    }
+                    //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
+                     if(_figure > 0 && standardBoard[uint(i)] < 0){
+                    clear = false;
+                    }
+                    //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
+                    if(_figure < 0 && standardBoard[uint(i)] > 0){
+                    clear = false;
+                }
+                return true;
+        }
+}
+    
+    
+function skewedMovment(int _figure, int _startPos, int _endPos, int _movePattern) public returns (bool){
+    
+    bool clear = true;
+    int i;
+    
+    for(i = _startPos; i != _endPos; i = i + _movePattern){
+        if(clear == false){
+            return false;
+        }
+        //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)
+        if(_figure > 0 && standardBoard[uint(i)] > 0){
+        //Sofortige invalidierung
+        return false;
+        }
+        //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
+        if(_figure < 0 && standardBoard[uint(i)] < 0){ 
+        //Sofortiger invalidierung
+        return false;
+        }
+        //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
+        if(_figure > 0 && standardBoard[uint(i)] < 0){
+        clear = false;
+        }
+        //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
+        if(_figure < 0 && standardBoard[uint(i)] > 0){
+        clear = false;
+        }
+    }
+}
+    
+function legitMove(int _figure, int _startPos, int _endPos, int _movePattern) public returns(bool){
 
 /*  _movePattern
         8 = forward
@@ -77,124 +283,93 @@ function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern) 
     }
     
     //Wenn der Turm nach vorne oder hinten geht
-    if(_figure == 6 && _movePattern == 8 || _movePattern == -8){
-            for(i = _startPos + _movePattern; i <= _endPos; i = i + _movePattern){
-                    if(clear == false){
-                    return false;
-                    }
-                //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
-                if(_figure > 0 && standardBoard[uint(i)] > 0){
-                    //Sofortige invalidierung
-                    return false;
-                }
-                //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
-                if(_figure < 0 && standardBoard[uint(i)] < 0){ 
-                    //Sofortiger invalidierung
-                    return false;
-                }
-                //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
-                if(_figure > 0 && standardBoard[uint(i)] < 0){
-                    clear == false;
-                }
-                //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
-                if(_figure < 0 && standardBoard[uint(i)] > 0){
-                    clear == false;
-                }
-                
-                }
-                return true;
-            }
-}
-
-    
-function legitMove(int _figure, int _oldIndex, int _newIndex)  public returns(bool){
-    
-    if(_figure == 6){       //Weißer Bauer
-        
-        int mathMove = _newIndex - _oldIndex; //TODO: Modulo!
-        
-        //Forwaertz TODO: 2 Schritte am Anfang
-        //Wenn der Bauer Weiß ist & auf seinem Zielfeld keine Figur steht. D.h. Der Bauer bewegt sich normal
-        if(mathMove%8 == 0 && isPathClear(_figure, _oldIndex, _newIndex, mathMove%10)){
-            //Figur von der alten Position entfernen
-            standardBoard[uint(_oldIndex)] = 0;
-            //Figur auf die neue Position setzten
-            standardBoard[uint(_newIndex)] = 6;
-            //return true, damit die Webseite weiß, ob der Zug erfogreich war oder nicht
+    if(_figure == 6 || _figure == -6 && _movePattern == 8 || _movePattern == -8){
+        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
             return true;
         }
-        //Wenn der Bauer Weiß ist und sich schräg bewegt. D.h. Der Bauer schlägt eine andere Figur    
-        if(mathMove%7 == 0 || mathMove%9 == 0 && isPathClear(_figure, _oldIndex, _newIndex, mathMove%10)){
-            
-        }
-        //Wenn der Zug ungültig ist:
         else{
-            return false;
-        }    
+        return false;  
+        }
+    }
+        
+    //Seitliches Turm-Movement    
+    if(_figure == 6 || _figure == -6 && _movePattern == 1 || _movePattern == -1){
+        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
+    }
+    
+    //Pferd Bewegung nach links
+    if(_figure == 4 || _figure == -4 && _movePattern == -10){
+        
+        if(_endPos < _startPos - 8)
+
+     
+    //_movePattern == 6
+    
+    //Bishop-Movement
+    if(_figure == 4 || _figure == -4 && _movePattern == 7 || _movePattern == 9 || _movePattern == -7 || _movePattern == -9){
+        if(skewedMovment(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
+    }    
+  
+    //Queen-Movement schräg
+    if(_figure == 2 || _figure == -2 && _movePattern == 7 || _movePattern == 9 || _movePattern == -7 || _movePattern == -9){
+        if(skewedMovment(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
+    } 
+    //Queen-Movement horizontal
+    if(_figure == 2 || _figure == -2 && _movePattern == 1 || _movePattern == -1){
+        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
+    }     
+    //Queen-Movement vertikal
+    if(_figure == 2 || _figure == -2 && _movePattern == 8 || _movePattern == -8){
+        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
     }      
     
-    if(_figure == -6){      //Schwarzer Bauer
-        
-    }       
-
-    if(_figure == 5){       //Weißer Turm
-        if(mathMove%8 == 0 && isPathClear(_figure, _oldIndex, _newIndex, mathMove%10)){
-            //Figur von der alten Position entfernen
-            standardBoard[uint(_oldIndex)] = 0;
-            //Figur auf die neue Position setzten
-            standardBoard[uint(_newIndex)] = _figure;
-            return true;
+    
+    //King-Movement horizontal
+    if(_figure == 1 || _figure == -1 && _movePattern == 1 || _movePattern == -1){
+        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+             return true;
         }
         else{
-            return false;
+        return false;
         }
-    } 
-    
-    if(_figure == -5){      //Schwarzer Turm
-        
+    }     
+    //King-Movement vertikal
+    if(_figure == 1 || _figure == -1 && _movePattern == 8 || _movePattern == -8){
+        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
+             return true;
+        }
+        else{
+        return false;
+        }
+    }      
+   
+        }
     }
-    
-    if(_figure == 4 ){      //Weißer Springer
-        
-    } 
-    
-    if(_figure == -4){      //Schwarzer Springer
-        
-    }
-    
-    if(_figure == 3){       //Weißer Laeufer
-        
-    }
-    
-    if(_figure == -3){      //Schwarzer Laufer
-        
-    }
-    
-    if(_figure == 2){       //Weiße Dame
-        
-    } 
-    
-    if(_figure == -2){      //Schwarze Dame
-        
-    }
-    
-    if(_figure == 1){       //Weißer Koenig
-        
-    } 
-    
-    if(_figure == -1){      //Schwarzer Koenig
-        
-    }
-    
-    
-    
-    
-    //Speichern
-    Moves.push("");  //~ 100k Gas pro Zug
-    
-    return true;
-    
 }
 
-}
     
