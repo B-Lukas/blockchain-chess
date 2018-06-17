@@ -1,4 +1,4 @@
-pragma solidity ^0.4.2;
+pragma solidity ^0.4.22;
 
 contract Figures{
     
@@ -29,15 +29,15 @@ function startGame() public returns(int[64]){ //800k Gas to initialize Game
     return standardBoard;
 }
 
+//TODO: Schwarzer Bauer
 //TODO: Schachfeld als Bitfolge speichern
 //TODO: isPathClear implementieren in skewedMovment und verticalMovement
 //TODO: Zuege speichern
-//TODO: Endfelder z.B. beim Läufer
-
 //TODO: Input nur zwischen 0-63 gültig
+//TODO: Figurpositionen aktualisieren
 
 //Überprüft, ob eine Figur zwischen Start- und Zielfeld steht
-function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern)internal returns(bool){
     bool clear = true;
     int i;
     
@@ -68,7 +68,7 @@ function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern)p
 }
 
 
-function horizontalMovement(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+function horizontalMovement(int _figure, int _startPos, int _endPos, int _movePattern)internal returns(bool){
     
     if(_startPos >= 0 && _startPos <= 7){
               
@@ -181,7 +181,7 @@ function horizontalMovement(int _figure, int _startPos, int _endPos, int _movePa
     
 }
 
-function verticalMovement(int _figure, int _startPos, int _endPos, int _movePattern)public returns(bool){
+function verticalMovement(int _figure, int _startPos, int _endPos, int _movePattern)internal returns(bool){
     
     bool clear = true;
     int i;
@@ -214,12 +214,26 @@ function verticalMovement(int _figure, int _startPos, int _endPos, int _movePatt
 }
     
     
-function skewedMovment(int _figure, int _startPos, int _endPos, int _movePattern) public returns (bool){
+function skewedMovment(int _figure, int _startPos, int _endPos, int _movePattern) internal returns (bool){
     
     bool clear = true;
     int i;
+    bool border = false;
+    bool bordercounter = false;
     
     for(i = _startPos; i != _endPos; i = i + _movePattern){
+        
+        if(border == true){
+            return false;
+        }
+        
+        //TODO: Alle Randfelder eintragen
+        if(bordercounter == true){
+            if(standardBoard[uint(i)] == 0 || standardBoard[uint(i)] == 7 || standardBoard[uint(i)] == 7){
+                border = true;
+            }
+        }
+        bordercounter = true;
         if(clear == false){
             return false;
         }
@@ -302,10 +316,30 @@ function legitMove(int _figure, int _startPos, int _endPos, int _movePattern) pu
         }
     }
     
-    //Pferd Bewegung nach links
-    if(_figure == 4 || _figure == -4 && _movePattern == -10){
+    //Pferd Bewegung nach links-oben
+    if(_figure == 4 || _figure == -4 && _movePattern == 6){
         
-        if(_endPos < _startPos - 8)
+        for(i = _startPos;i != _startPos -2 ; i = i -1){
+            if(clear == false){
+                return false;
+            }
+            if(standardBoard[uint(i)] == 0 || standardBoard[uint(i)] == 8 || standardBoard[uint(i)] == 16 || standardBoard[uint(i)] == 24 || standardBoard[uint(i)] == 32 || standardBoard[uint(i)] == 40 || standardBoard[uint(i)] == 48 || standardBoard[uint(i)] == 56){
+                clear = false;
+            }
+        }
+            if( _startPos >= 56){
+                return false;
+            }
+            if(_figure == 4 && standardBoard[uint(_endPos)] > 0){
+                return false;
+            }
+            if(_figure == -4 && standardBoard[uint(_endPos)] < 0){
+                return false;
+            }            
+            else{
+                return true;
+            }
+    }
 
      
     //_movePattern == 6
@@ -369,7 +403,7 @@ function legitMove(int _figure, int _startPos, int _endPos, int _movePattern) pu
     }      
    
         }
-    }
 }
+
 
     
