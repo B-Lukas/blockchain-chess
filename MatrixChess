@@ -40,156 +40,39 @@ function startGame() public returns(int[64]){ //800k Gas to initialize Game
 }
 
 //TODO: Schwarzer Bauer
-//TODO: Schachfeld als Bitfolge speichern
-//TODO: isPathClear implementieren in skewedMovment und verticalMovement
+//TODO: Schachfeld als Bitfolge speichernt
 //TODO: Zuege speichern
 //TODO: Input nur zwischen 0-63 gültig
 //TODO: Figurpositionen aktualisieren
 
-//Überprüft, ob eine Figur zwischen Start- und Zielfeld steht
-function isPathClear(int _figure, int _startPos, int _endPos, int _movePattern)internal returns(bool){
+
+//TODO: Finish
+function horizontalMovement(int _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, uint _movePatternX, uint _movePatternY)internal returns(bool){
     bool clear = true;
-    int i;
-    
-     for(i = _startPos + _movePattern; i != _endPos; i = i + _movePattern){
-        if(clear == false){
-        return false;
-        }
+
+    for(uint i = _fromX; i =! _toX; i + _movePatternX ){
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
-        if(_figure > 0 && standardBoard[uint(i)] > 0){
+        if(_figure < 7 && Chessboard[_fromY][i] > 0 && Chessboard[i][i] < 7){
         //Sofortige invalidierung
         return false;
         }
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
-        if(_figure < 0 && standardBoard[uint(i)] < 0){ 
+        if(_figure > 8 && Chessboard[_fromY][i] < 0){ 
         //Sofortiger invalidierung
         return false;
         }
         //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
-        if(_figure > 0 && standardBoard[uint(i)] < 0){
-        clear == false;
+        if(_figure > 0 && _figure < 7 && Chessboard[_fromY][i] > 7){
+        clear = false;
         }
         //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
-        if(_figure < 0 && standardBoard[uint(i)] > 0){
-        clear == false;
+        if(_figure < 0 && Chessboard[_fromY][i] < 7){
+        clear = false;
+        }
+        return true;
         }
     }
-    return true;
-}
-
-
-function horizontalMovement(int _figure, int _startPos, int _endPos, int _movePattern)internal returns(bool){
     
-    if(_startPos >= 0 && _startPos <= 7){
-              
-                //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-                if(_endPos >= 8){
-                return false;
-                }
-              
-                if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-                }
-                else{
-                return false;
-                }
-              
-              
-            }
-          
-        if(_startPos >= 8 && _startPos <= 15){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 8 &&_endPos > 15){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }    
-        if(_startPos >= 16 && _startPos <= 23){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 16 &&_endPos > 23){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }         
-        if(_startPos >= 24 && _startPos <= 31){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 24 &&_endPos > 31){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }                    
-        if(_startPos >= 32 && _startPos <= 39){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 32 &&_endPos > 39){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }  
-        if(_startPos >= 40 && _startPos <= 47){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 40 &&_endPos > 47){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }           
-        if(_startPos >= 48 && _startPos <= 55){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 48 &&_endPos > 55){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }              
-        if(_startPos >= 56 && _startPos <= 63){
-            //Wenn die Seitliche Bewegung außerhalb der Reihe liegt
-            if(_startPos < 56 &&_endPos > 63){
-                return false;
-              }
-              
-              if(isPathClear(_figure, _startPos, _endPos, _movePattern)){
-                return true;
-              }
-              else{
-                return false;
-              } 
-        }
-    
-}
 
 function verticalMovement(int _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, uint _movePatternX, uint _movePatternY)internal view returns(bool){
     
@@ -224,49 +107,63 @@ function verticalMovement(int _figure, uint _fromX, uint _fromY, uint _toX, uint
 }
     
     
-function skewedMovment(int _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, int _movePattern) internal view returns (bool){
+function skewedMovment(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, uint _movePatternX, uint _movePatternY) internal view returns (bool){
     
     bool clear = true;
-    int i;
+    uint i;
     bool border = false;
     bool bordercounter = false;
     
-    for(i = _startPos; i != _endPos; i = i + _movePattern){
-        
-        if(border == true){
+    uint fromX = _fromX;
+    
+    //Schräg nach oben-rechts und oben-links
+    if(_movePatternY == 1){
+        for(i = 1; _fromY+i != _toY; i = i + _movePatternX){
+            fromX = fromX + _movePatternX;
+            
+            if(clear == false){
             return false;
-        }
-        
-        //TODO: Alle Randfelder eintragen
-        if(bordercounter == true){
-            if(standardBoard[uint(i)] == 0 || standardBoard[uint(i)] == 7 || standardBoard[uint(i)] == 7){
-                border = true;
+            }    
+            
+            if(_figure > 7 && Chessboard[i][fromX] > 7){
+            return false;
             }
+            if(_figure < 7 && Chessboard[i][fromX] < 7){
+            return false;   
+            }
+            if(_figure > 7 && Chessboard[i][fromX] < 7){
+            clear == false;
+            }
+            if(_figure < 7 && Chessboard[i][fromX] > 7){
+            clear == false;   
+            }    
         }
-        bordercounter = true;
-        if(clear == false){
+    }   
+
+    //Schräg nach unten-links und unten rechts
+    if(_movePatternY == -1){
+        for(i = 1; _fromY-i != _toY; i = i + _movePatternX){
+            fromX = fromX +_movePatternX;
+            
+            if(clear == false){
             return false;
-        }
-        //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)
-        if(_figure > 0 && standardBoard[uint(i)] > 0){
-        //Sofortige invalidierung
-        return false;
-        }
-        //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
-        if(_figure < 0 && standardBoard[uint(i)] < 0){ 
-        //Sofortiger invalidierung
-        return false;
-        }
-        //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
-        if(_figure > 0 && standardBoard[uint(i)] < 0){
-        clear = false;
-        }
-        //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
-        if(_figure < 0 && standardBoard[uint(i)] > 0){
-        clear = false;
+            }    
+            
+            if(_figure > 7 && Chessboard[i][fromX] > 7){
+            return false;
+            }
+            if(_figure < 7 && Chessboard[i][fromX] < 7){
+            return false;   
+            }
+            if(_figure > 7 && Chessboard[i][fromX] < 7){
+            clear == false;
+            }
+            if(_figure < 7 && Chessboard[i][fromX] > 7){
+            clear == false;   
+            }    
         }
     }
-}
+} 
     
 function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, uint _movePatternX, uint _movePatternY) public returns(bool){
 
