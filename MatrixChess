@@ -79,7 +79,6 @@ function verticalMovement(int _figure, uint _fromX, uint _fromY, uint _toX, uint
     bool clear = true;
     int i;
     
-    //TODO: Implement isPathClear
                 for(i = _fromY + _movePatternY; i != _movePatternY; i = i + _movePatternY){
                     if(clear == false){
                     return false;
@@ -165,15 +164,34 @@ function skewedMovment(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _
     }
 } 
     
-function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY, uint _movePatternX, uint _movePatternY) public returns(bool){
+function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY) public returns(bool){
 
-/*  _movePattern
-        8 = forward
-        7 = skewed left             -> Bug, keine Feldgrenzen!
-        9 = skewed right
-*/
+
     bool clear = true;
     int i;
+    int _movePatternX;
+    int _movePatternY;
+    
+    
+    if(_toX - _fromX > 0){
+        _movePatternX = 1;
+    }
+    if(_toY - _fromY > 0){
+        _movePatternY = 1;
+    }
+    if(_toX - _fromX == 0){
+        _movePatternX = 0;
+    }
+    if(_toY - _fromY == 0){
+        _movePatternY = 0;
+    }
+    if(_toX - _fromX < 0){
+        _movePatternX = -1;
+    }
+    if(_toY - _fromY < 0){
+        _movePatternY = -1;
+    
+    
     
     //TODO: Movepattern errechnen (= Differenz)
     //TODO: Return true muss aktualisiert werden
@@ -202,8 +220,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
     */ 
     
     //Wenn der Turm nach vorne oder hinten geht
-    if(_figure == 6 || _figure == -6 && _movePattern == 8 || _movePattern == -8){
-        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 6 || _figure == 9 && _movePatternY == 1 || _movePatternY == -1 && _movePatternX == 0){
+        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
             return true;
         }
         else{
@@ -212,8 +230,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
     }
         
     //Seitliches Turm-Movement    
-    if(_figure == 6 || _figure == -6 && _movePattern == 1 || _movePattern == -1){
-        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 6 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY = 0){
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -221,14 +239,13 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
         }
     }
     
-    //TODO: Randfelder
+    //TODO: Pferd
     
     //Pferd Bewegung nach links-unten
     if(_figure == 4 || _figure == -4 && _movePattern == 6){
         return true;
         
     
-
     //Pferd Bewegung nach links-oben
     if(_figure == 4 || _figure == -4 && _movePattern == -10){
         return true;
@@ -264,8 +281,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
     }
     
     //Bishop-Movement
-    if(_figure == 4 || _figure == -4 && _movePattern == 7 || _movePattern == 9 || _movePattern == -7 || _movePattern == -9){
-        if(skewedMovment(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 4 || _figure == 11 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == -1 || _movePatternY== 1 && _movePatternX == 1 || _movePatternX == -1){
+        if(skewedMovment(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -274,8 +291,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
     }    
   
     //Queen-Movement schräg
-    if(_figure == 2 || _figure == -2 && _movePattern == 7 || _movePattern == 9 || _movePattern == -7 || _movePattern == -9){
-        if(skewedMovment(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 2 || _figure == 12 && _movePatternY == 1 && _movePatternX == -1 || _movePatternX == -1 || _movePatternY== -1 && _movePatternX == -1 || _movePatternX == -1){
+        if(skewedMovment(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -283,8 +300,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
         }
     } 
     //Queen-Movement horizontal
-    if(_figure == 2 || _figure == -2 && _movePattern == 1 || _movePattern == -1){
-        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 2 || _figure == 12 && _movePatternY == 0 && _movePatternX == -1 || _movePatternX == 1 && _movePatternY == 0){
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -292,8 +309,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
         }
     }     
     //Queen-Movement vertikal
-    if(_figure == 2 || _figure == -2 && _movePattern == 8 || _movePattern == -8){
-        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if(_figure == 2 || _figure == 12 && _movePatternY == 1 && _movePatternX == 0 || _movePatternY == -1 && _movePatternX == 0){
+        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -303,8 +320,8 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
     
     
     //King-Movement horizontal
-    if(_figure == 1 || _figure == -1 && _movePattern == 1 || _movePattern == -1){
-        if(horizontalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if((_figure == 1 || _figure == 13) && _movePatternX = 0 && (_movePatternY == 1 || _movePatternY == -1)){
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
@@ -312,16 +329,20 @@ function legitMove(uint _figure, uint _fromX, uint _fromY, uint _toX, uint _toY,
         }
     }     
     //King-Movement vertikal
-    if(_figure == 1 || _figure == -1 && _movePattern == 8 || _movePattern == -8){
-        if(verticalMovement(_figure, _startPos, _endPos, _movePattern)){
+    if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == -1)){
+        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
              return true;
         }
         else{
         return false;
         }
-    }      
+    } 
+    else{
+        return false;
+    }
    
-        }
+}
+}
 }
 }
 
