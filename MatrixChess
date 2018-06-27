@@ -44,7 +44,7 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
 
 
 //TODO: Finish
-function horizontalMovement(int _figure, int _fromY, int _fromX, int _toY, int _toX, int _movePatternX, int _movePatternY)internal returns(bool){
+function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _movePatternX)internal view returns(bool){
     bool clear = true;
 
     for(int i = _fromX; i != _toX; i + _movePatternX){
@@ -75,7 +75,7 @@ function getBoard() public view returns(int[8][8]){
     return Chessboard;
 }    
 
-function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _toX, int _movePatternX, int _movePatternY)internal view returns(bool){
+function verticalMovement(int _figure, int _fromY, int _fromX, int _movePatternY)internal view returns(bool){
     
     bool clear = true;
     int i;
@@ -107,7 +107,7 @@ function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _to
 }
     
     
-function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _toX, int _movePatternX, int _movePatternY) internal view returns (bool){
+function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _movePatternX, int _movePatternY) internal view returns (bool){
     
     bool clear = true;
     int i;
@@ -187,7 +187,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     
     // Extra fuer WeißerBauer, wenn er sich bewegt
     if(_figure == 6 && _movePatternX == 0 && _movePatternY == 1){
-        if(verticalMovement( _figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY) == true){
+        if(verticalMovement( _figure, _fromX, _fromY, _movePatternY) == true){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
         }
@@ -213,121 +213,156 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     */ 
     
     //Wenn der Turm nach vorne oder hinten geht
-    if(_figure == 6 || _figure == 9 && _movePatternY == 1 || _movePatternY == -1 && _movePatternX == 0){
-        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
+    if(_figure == 6 || _figure == 9 && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
+        if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
         }
         else{
-        return false;  
+            return false;  
         }
     }
         
     //Seitliches Turm-Movement    
     if(_figure == 6 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == 0){
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     }
     
-    //TODO: Pferd
-    
-    //Pferd Bewegung nach links-unten
-    if(_figure == 4 || _figure == -4 ){
-        return true;
+    //Pferd Bewegung nach oben-rechts und oben-links
+    if((_figure == 4 || _figure == 10) && (_toX == _fromX + 1 || _toX == _fromX - 1) && _toY == 2){
+        //Wenn eine Gleichfarbige Figure am Zielfeld steht
+        if(_figure == 4 && Chessboard[uint(_toY)][uint(_toX)] < 7){
+            return false;
+        }
+        if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
+            return false;
+        }        
+        else{
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
+        }
     }
-    /*
-    //Pferd Bewegung nach links-oben
-    if(_figure == 4 || _figure == -4 && _movePattern == -10){
-        return true;
-    }
-    
-    //Pferd Bewegung nach rechts-unten
-    if(_figure == 4 || _figure == -4 && _movePattern == 10){
-        return true;
+    //Pferd Bewegung nach unten-links und unten-rechts
+    if((_figure == 4 || _figure == 10) && (_toX == _fromX + 1 || _toX == _fromX - 1) && _toY == -2){
+        //Wenn eine Gleichfarbige Figure am Zielfeld steht
+        if(_figure == 4 && Chessboard[uint(_toY)][uint(_toX)] < 7){
+            return false;
+        }
+        if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
+            return false;
+        }        
+        else{
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
+        }
     }    
-    
-    //Pferd Bewegung nach rechts-oben
-    if(_figure == 4 || _figure == -4 && _movePattern == -6){
-        return true;
-    }    
-    //Pferd Bewegung nach oben-rechts
-    if(_figure == 4 || _figure == -4 && _movePattern == -15){
-        return true;
-    } 
-    //Pferd Bewegung nach oben-links
-    if(_figure == 4 || _figure == -4 && _movePattern == -17){
-        return true;
-    } 
-    //Pferd Bewegung nach unten-links
-    if(_figure == 4 || _figure == -4 && _movePattern == 15){
-        return true;
-    } 
-    //Pferd Bewegung nach unten-rechts
-    if(_figure == 4 || _figure == -4 && _movePattern == 17){
-        return true;
-    }
-    else{
-        return false;
-    }
-    */
+    //Pferd Bewegung nach links-oben und links-unten
+    if((_figure == 4 || _figure == 10) && (_toY == _fromY + 1 || _toY == _fromY - 1) && _toX == 2){
+        //Wenn eine Gleichfarbige Figure am Zielfeld steht
+        if(_figure == 4 && Chessboard[uint(_toY)][uint(_toX)] < 7){
+            return false;
+        }
+        if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
+            return false;
+        }        
+        else{
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
+        }
+    }   
+    //Pferd Bewegung nach rechts-oben und rechts-unten
+    if((_figure == 4 || _figure == 10) && (_toY == _fromY + 1 || _toY == _fromY - 1) && _toX == -2){
+        //Wenn eine Gleichfarbige Figure am Zielfeld steht
+        if(_figure == 4 && Chessboard[uint(_toY)][uint(_toX)] < 7){
+            return false;
+        }
+        if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
+            return false;
+        }        
+        else{
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
+        }
+    }     
     //Bishop-Movement
     if(_figure == 4 || _figure == 11 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == -1 || _movePatternY== 1 && _movePatternX == 1 || _movePatternX == -1){
-        if(skewedMovment(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(skewedMovment(_figure, _fromX, _fromY, _toY, _movePatternX, _movePatternY)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     }    
   
     //Queen-Movement schräg
     if(_figure == 2 || _figure == 12 && _movePatternY == 1 && _movePatternX == -1 || _movePatternX == -1 || _movePatternY== -1 && _movePatternX == -1 || _movePatternX == -1){
-        if(skewedMovment(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(skewedMovment(_figure, _fromX, _fromY, _toY, _movePatternX, _movePatternY)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;            
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     } 
     //Queen-Movement horizontal
     if(_figure == 2 || _figure == 12 && _movePatternY == 0 && _movePatternX == -1 || _movePatternX == 1 && _movePatternY == 0){
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     }     
     //Queen-Movement vertikal
     if(_figure == 2 || _figure == 12 && _movePatternY == 1 && _movePatternX == 0 || _movePatternY == -1 && _movePatternX == 0){
-        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     }      
     
     
     //King-Movement horizontal
     if((_figure == 1 || _figure == 13) && _movePatternX == 0 && (_movePatternY == 1 || _movePatternY == -1)){
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     }     
     //King-Movement vertikal
     if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == -1)){
-        if(verticalMovement(_figure, _fromX, _fromY, _toX,  _toY, _movePatternX, _movePatternY)){
-             return true;
+        if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
         }
         else{
-        return false;
+            return false;
         }
     } 
     else{
@@ -339,7 +374,5 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
 
 
 
-
-    
 
     
