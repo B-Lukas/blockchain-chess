@@ -4,6 +4,10 @@ contract Figures{
     
 string[] Moves;
 int[8][8] Chessboard;
+bool whiteSmallRochade = false;
+bool blackSmallRochade = false;
+bool whiteLargeRochade = false;
+bool blackLargeRochade = false;
 
 function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     
@@ -36,14 +40,11 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     return Chessboard;
 }
 
-//TODO: Schwarzer Bauer
 //TODO: Schachfeld als Bitfolge speichernt
 //TODO: Zuege speichern
 //TODO: Input nur zwischen 0-63 gültig
-//TODO: Figurpositionen aktualisieren
+//TODO: Weiß fängt immer an und dann im Wechsel
 
-
-//TODO: Finish
 function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _movePatternX)internal view returns(bool){
     bool clear = true;
 
@@ -160,6 +161,29 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
         }
     }
 } 
+//Extra function für die Rochade
+function rochade(int _figure, int _fromY, int _fromX, int _toY, int _toX)public view returns(bool){
+    //große Rochade
+    if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == false) || _figure == 13 && _toY == 7 && _toX == 5 && whiteLargeRochade == false){
+        for(uint c = 1;c < 4 ;c++){
+            if(_figure == 1){
+                if(Chessboard[0][c] != 0){
+                    return false;
+                }
+            }
+            if(_figure == 13){
+                if(Chessboard[7][c] != 0){
+                    return false;
+                }
+            }            
+        }
+        Chessboard[0][0]
+    }   
+    //kleine Rochade
+    if((_figure == 1 && _toY == 0 && _toX == 6 && whiteSmallRochade == false) || _figure == 13 && _toY == 7 && _toX == 1 && whiteSmallRochade == false){
+        
+    }    
+}
     
 function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) public returns(bool){
 
@@ -185,35 +209,45 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         _movePatternY = -1;
     }
     
-    // Extra fuer WeißerBauer, wenn er sich bewegt
-    if(_figure == 6 && _movePatternX == 0 && _movePatternY == 1){
-        if(verticalMovement( _figure, _fromX, _fromY, _movePatternY) == true){
+    //Bauer Vorwärtsbewegung
+    if(_figure == 6 && _movePatternX == 0 && _movePatternY == 1 || _figure == 8 && _movePatternX == 0 && _movePatternY == -1){
+        if(verticalMovement( _figure, _fromX, _fromY, _movePatternY) == true){ //TODO: Bauer kann nicht nach vorne schlagen
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
         }
-        
     }
     
-    // Extra fuer WeißerBauer, wenn er schlägt
-   // if(_figure == 6 && _movePatternX == 1 && _movePatternY == 1 || _movePatternX == -1 && _movePatternY == 1 && Chessboard[uint(_fromY + 1)][uint(_fromX +1)] < 7 || Chessboard[uint(_fromY + 1)][uint(_fromX - 1)] < 7 && _toX - _fromX == 1|| _toX - _fromX == -1 && _toY - _fromY == 1 && _toY - _fromY == -1){
-//        return true;
-//    }
+    //Bauer, wenn er eine Figure schlägt
+    if(_figure == 6 && _movePatternY == 1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] < 7 ||_figure == 8 && _movePatternY == -1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] > 7){
+        return true;
+    }
     
-    /*
-    //Extra für WeißerBauer, wenn er 2 Schritte macht von seiner Startposition
-    if(_figure == 6 && _endPos - _startPos == 16){
+    //weißer Bauer, wenn er 2 Schritte macht von seiner Startposition
+    if(_figure == 6 && _fromY == 1 && _toY - _fromY == 2){
         //Wenn das Feld vor dem Bauern und das Zielfeld frei sind: true
-       if(standardBoard[uint(_startPos + _movePattern)] == 0 && standardBoard[uint(_endPos)] == 0){
-           return clear;
+        if(Chessboard[uint(_fromX + 1)][uint(_fromY + 1)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
        }
        else{
            return false;
        }
     }
-    */ 
-    
+    //schwarzer Bauer, wenn er 2 Schritte macht von seiner Startposition
+    if(_figure == 8 && _fromY == 6 && _toY - _fromY == -2){
+        //Wenn das Feld vor dem Bauern und das Zielfeld frei sind: true
+        if(Chessboard[uint(_fromX - 1)][uint(_fromY - 1)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            return true;
+       }
+       else{
+           return false;
+       }
+    }    
     //Wenn der Turm nach vorne oder hinten geht
-    if(_figure == 6 || _figure == 9 && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
+    if(_figure == 5 || _figure == 9 && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
         if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -225,7 +259,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }
         
     //Seitliches Turm-Movement    
-    if(_figure == 6 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == 0){
+    if(_figure == 5 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == 0){
         if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -297,7 +331,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         }
     }     
     //Bishop-Movement
-    if(_figure == 4 || _figure == 11 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == -1 || _movePatternY== 1 && _movePatternX == 1 || _movePatternX == -1){
+    if(_figure == 3 || _figure == 11 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == -1 || _movePatternY== 1 && _movePatternX == 1 || _movePatternX == -1){
         if(skewedMovment(_figure, _fromX, _fromY, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -368,7 +402,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     else{
         return false;
     }
-   
+  
 }
 }
 
