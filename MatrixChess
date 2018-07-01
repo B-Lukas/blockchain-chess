@@ -4,12 +4,17 @@ contract Figures{
     
 string[] Moves;
 int[8][8] Chessboard;
-bool whiteSmallRochade = false;
-bool blackSmallRochade = false;
-bool whiteLargeRochade = false;
-bool blackLargeRochade = false;
+bool whiteSmallRochade = true;
+bool blackSmallRochade = true;
+bool whiteLargeRochade = true;
+bool blackLargeRochade = true;
+int gameID = -1;
+
+int[][]Zuege;
 
 function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
+    
+    gameID = gameID +1;
     
     Chessboard[0] = [5,4,3,2,1,3,4,5];
     Chessboard[1] = [6,6,6,6,6,6,6,6];
@@ -40,10 +45,17 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     return Chessboard;
 }
 
-//TODO: Schachfeld als Bitfolge speichernt
+//TODO: Schachfeld als Bitfolge speichernt (Bonus)
 //TODO: Zuege speichern
 //TODO: Input nur zwischen 0-63 gültig
 //TODO: Weiß fängt immer an und dann im Wechsel
+//TODO: König schräges Movement + Rochade
+//TODO: Nach der Rochaden Methode, Rochade unmöglich machen
+//TODO: Bauerntausch
+//TODO: Wann endet das Spiel
+
+//TODO: Rochade: der König über kein Feld ziehen muss, das durch eine feindliche Figur bedroht wird,
+//               der König vor und nach Ausführung der Rochade nicht im Schach steht.
 
 function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _movePatternX)internal view returns(bool){
     bool clear = true;
@@ -162,13 +174,15 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
     }
 } 
 //Extra function für die Rochade
-function rochade(int _figure, int _fromY, int _fromX, int _toY, int _toX)public view returns(bool){
+function rochade(int _figure, int _fromY, int _fromX, int _toY, int _toX)public returns(bool){
+    uint c = 0;
     //große Rochade
-    if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == false) || _figure == 13 && _toY == 7 && _toX == 5 && whiteLargeRochade == false){
-        for(uint c = 1;c < 4 ;c++){
+    if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == true) || _figure == 13 && _toY == 7 && _toX == 2 && whiteLargeRochade == true){
+        
+        for(c = 1;c < 4 ;c++){
             if(_figure == 1){
                 if(Chessboard[0][c] != 0){
-                    return false;
+                        return false;
                 }
             }
             if(_figure == 13){
@@ -177,15 +191,64 @@ function rochade(int _figure, int _fromY, int _fromX, int _toY, int _toX)public 
                 }
             }            
         }
-        Chessboard[0][0]
+        if(_figure == 1){  
+            Chessboard[0][0] = 0;
+            Chessboard[0][4] = 0;
+            Chessboard[0][6] = 1;
+            Chessboard[0][5] = 5;     
+            return true;
+        }
+        if(_figure == 13){  
+            Chessboard[7][0] = 0;
+            Chessboard[7][4] = 0;
+            Chessboard[7][2] = 1;
+            Chessboard[7][3] = 5;   
+            return true;
+        }        
     }   
     //kleine Rochade
-    if((_figure == 1 && _toY == 0 && _toX == 6 && whiteSmallRochade == false) || _figure == 13 && _toY == 7 && _toX == 1 && whiteSmallRochade == false){
+    if((_figure == 1 && _toY == 0 && _toX == 6 && whiteSmallRochade == true) || _figure == 13 && _toY == 7 && _toX == 6 && whiteSmallRochade == true){
         
-    }    
-}
+        for(c = 5;c < 7;c++){
+            if(_figure == 1){
+                if(Chessboard[0][c] != 0){
+                        return false;
+                }
+            }
+            if(_figure == 13){
+                if(Chessboard[7][c] != 0){
+                    return false;
+                }
+            }            
+        }
+        if(_figure == 1){  
+            Chessboard[0][0] = 0;
+            Chessboard[0][4] = 0;
+            Chessboard[0][2] = 1;
+            Chessboard[0][3] = 5;     
+            return true;
+        }
+        if(_figure == 13){  
+            Chessboard[7][0] = 0;
+            Chessboard[7][4] = 0;
+            Chessboard[7][2] = 1;
+            Chessboard[7][3] = 5;   
+            return true;
+        }        
+    }     
+}    
+
+function speicherZueg(int _fromX,int _fromY,int _toX,int _toY) internal {
+    
+    Zuege[uint(gameID)].push(_fromX);
+    Zuege[uint(gameID)].push(_fromY);
+    Zuege[uint(gameID)].push(_toX);
+    Zuege[uint(gameID)].push(_toY);
+}   
     
 function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) public returns(bool){
+    
+    speicherZueg(_fromX, _fromY, _toX, _toY);
 
     int _movePatternX;
     int _movePatternY;
@@ -248,6 +311,22 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }    
     //Wenn der Turm nach vorne oder hinten geht
     if(_figure == 5 || _figure == 9 && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
+        //Code, damit die Rochade nach der Bewegung vo
+        if(_figure == 5 && _fromX == 0 && _fromY == 0){
+            whiteLargeRochade = false;
+        }
+        if(_figure == 5 && _fromX == 7 && _fromY == 0){
+            whiteSmallRochade = false;
+            
+        }
+        if(_figure == 9 && _fromX == 0 && _fromY == 7){
+            blackLargeRochade = false;
+        }
+        
+        if(_figure == 9 && _fromX == 7 && _fromY == 7){
+            blackSmallRochade = false;
+        }             
+        
         if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -260,6 +339,21 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         
     //Seitliches Turm-Movement    
     if(_figure == 5 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == 0){
+        if(_figure == 5 && _fromX == 0 && _fromY == 0){
+            whiteLargeRochade = false;
+        }
+        
+        if(_figure == 5 && _fromX == 7 && _fromY == 0){
+            whiteSmallRochade = false;
+        }
+        if(_figure == 9 && _fromX == 0 && _fromY == 7){
+            blackLargeRochade = false;
+        }
+        
+        if(_figure == 9 && _fromX == 7 && _fromY == 7){
+            blackSmallRochade = false;
+        }        
+        
         if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -379,6 +473,16 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     
     //King-Movement horizontal
     if((_figure == 1 || _figure == 13) && _movePatternX == 0 && (_movePatternY == 1 || _movePatternY == -1)){
+        
+        if(_figure == 1 && _fromX == 5 && _fromY == 0){
+            whiteLargeRochade = false;
+            whiteSmallRochade = false;
+        }
+        if(_figure == 13 && _fromX == 5 && _fromY == 7){
+            blackLargeRochade = false;
+            blackSmallRochade = false;
+        }
+
         if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -390,6 +494,16 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }     
     //King-Movement vertikal
     if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == -1)){
+        
+        if(_figure == 1 && _fromX == 5 && _fromY == 0){
+            whiteLargeRochade = false;
+            whiteSmallRochade = false;
+        }
+        if(_figure == 13 && _fromX == 5 && _fromY == 7){
+            blackLargeRochade = false;
+            blackSmallRochade = false;
+        }
+        
         if(verticalMovement(_figure, _fromX, _fromY, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
