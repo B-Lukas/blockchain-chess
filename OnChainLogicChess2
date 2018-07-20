@@ -113,7 +113,7 @@ function getBoard() public view returns(int[8][8]){
     return Chessboard;
 }    
 
-function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _movePatternY)internal view returns(bool){
+function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _movePatternY)internal  returns(bool){
     
     bool clear = true;
     int i;
@@ -122,7 +122,7 @@ function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _mo
         //TODO: FIX
     
     if(_movePatternY == 1){
-    for(i = _fromY + _movePatternY; i <= _toY; i = i +  _movePatternY){
+    for(i = _fromY + _movePatternY; i <= _toY; i = i + _movePatternY){
         if(clear == false){
             return false;
         }
@@ -159,6 +159,7 @@ function verticalMovement(int _figure, int _fromY, int _fromX, int _toY, int _mo
   
   if(_movePatternY == -1){  
     for(i = _fromY + _movePatternY; i >= _toY; i = i + _movePatternY){
+        testY = i;
         if(clear == false){
             return false;
         }
@@ -585,7 +586,8 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         else{
             return false;
         }
-    }     
+    }
+    }
     //King-Movement vertikal
     if((_figure == 1 || _figure == 13) && _movePatternX == 0 && (_movePatternY == 1 || _movePatternY == -1)){
         //Filtern ob die Figur mehr als 2 Felder läuft
@@ -600,7 +602,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
             blackSmallRochade = false;
         }
         
-        if(verticalMovement(_figure, _fromX, _fromY, _toY, _movePatternY)){
+        if(verticalMovement(_figure, _fromY, _fromX, _toY, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
@@ -609,7 +611,6 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
             return false;
         }
     } 
-    }
     }
     //King-schraeges Movement
     if((_figure == 1 || _figure == 13) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1))) || (((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
