@@ -48,8 +48,8 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
 
 function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _movePatternX)internal view returns(bool){
     bool clear = true;
-
-    for(int i = _fromX + _movePatternX; i >= _toX; i + _movePatternX){
+    if(_movePatternX == -1){
+        for(int i = _fromX + _movePatternX; i >= _toX; i + _movePatternX){
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
         if(_figure < 7 && Chessboard[uint(_fromY)][uint(i)] > 0 && Chessboard[uint(i)][uint(i)] < 7){
             //Sofortige invalidierung
@@ -74,9 +74,11 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
             clear = false;
             }
         }
+        }
+        return true;
     }
-    
-    for(int a = _fromX + _movePatternX; a <= _toX; i + _movePatternX){
+    if(_movePatternX == 1){
+        for(int a = _fromX + _movePatternX; a <= _toX; i + _movePatternX){
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
         if(_figure < 7 && Chessboard[uint(_fromY)][uint(i)] > 0 && Chessboard[uint(i)][uint(i)] < 7){
             //Sofortige invalidierung
@@ -102,8 +104,8 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
             }
         }
     }    
-    
     return true;
+}
 }
 
 function getBoard() public view returns(int[8][8]){
@@ -633,4 +635,3 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
   
 }
 }
-
