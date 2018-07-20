@@ -27,7 +27,7 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     Chessboard[7] = [9,10,11,12,13,11,10,9];
     
 /*
-    1 = WKing
+    1 = WKing //Gerade aus funktiniert nicht
     2 = WQuenn
     3 = WBishop
     4 = WKnight
@@ -41,7 +41,7 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     11 = BBishop
     10 = BKnight
     9 = BRook
-    8 = BPawn
+    8 = BPawn //seitlich ging nicht
 */
     return Chessboard;
 }
@@ -444,7 +444,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
             blackSmallRochade = false;
         }        
         
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+        if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
@@ -539,7 +539,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     } 
     //Queen-Movement horizontal
     if((_figure == 2 || _figure == 12) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1) && _movePatternY == 0){
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+        if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
@@ -573,7 +573,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
             blackSmallRochade = false;
         }
 
-        if(horizontalMovement(_figure, _fromX, _fromY, _toX, _movePatternX)){
+        if(horizontalMovement(_figure, _fromY, _fromX, _toY, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
