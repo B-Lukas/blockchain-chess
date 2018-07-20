@@ -428,7 +428,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }
         
     //Seitliches Turm-Movement    
-    if(_figure == 5 || _figure == 9 && _movePatternX == 1 || _movePatternX == -1 && _movePatternY == 0){
+    if(_figure == 5 || _figure == 9 && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
         if(_figure == 5 && _fromX == 0 && _fromY == 0){
             whiteLargeRochade = false;
         }
@@ -515,7 +515,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         }
     }     
     //Bishop-Movement
-    if((_figure == 3 || _figure == 11 ) && (_movePatternX == 1 || _movePatternX == -1) && (_movePatternY == -1 || _movePatternY== 1) && (_movePatternX == 1 || _movePatternX == -1)){
+    if((_figure == 3 || _figure == 11 ) && (_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1)))){
         if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -527,7 +527,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }    
   
     //Queen-Movement schräg
-    if((_figure == 2 || _figure == 12) && _movePatternY == 1 && (_movePatternX == -1 || _movePatternY== -1) && (_movePatternX == -1 || _movePatternX == -1)){
+    if((_figure == 2 || _figure == 12) && (_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1)))){
         if(skewedMovment(_figure, _fromX, _fromY, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;            
@@ -538,7 +538,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         }
     } 
     //Queen-Movement horizontal
-    if((_figure == 2 || _figure == 12) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1) && _movePatternY == 0){
+    if((_figure == 2 || _figure == 12) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
         if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -562,7 +562,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     
     
     //King-Movement horizontal
-    if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == 1 || _movePatternX == -1)){
+    if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
         
         if(_figure == 1 && _fromX == 5 && _fromY == 0){
             whiteLargeRochade = false;
@@ -583,7 +583,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
         }
     }     
     //King-Movement vertikal
-    if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == 1 || _movePatternX == -1)){
+    if((_figure == 1 || _figure == 13) && _movePatternX == 0 && (_movePatternY == 1 || _movePatternY == -1)){
         
         if(_figure == 1 && _fromX == 5 && _fromY == 0){
             whiteLargeRochade = false;
@@ -605,7 +605,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     } 
     
     //King-schraeges Movement
-    if((_figure == 1 || _figure == 13) && (_movePatternY == 1 || _movePatternY == 1 ) && (_movePatternX == -1 || _movePatternX == -1)){
+    if((_figure == 1 || _figure == 13) && (_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1)))){
         
         if(_figure == 1 && _fromX == 5 && _fromY == 0){
             whiteLargeRochade = false;
@@ -633,3 +633,4 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
   
 }
 }
+
