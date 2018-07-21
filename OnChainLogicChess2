@@ -70,7 +70,7 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
             clear = false;
         }
         //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
-        if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
+        if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(_fromY)][uint(i)] > 0){
             if(_figure == 8){
                 return false;
             }
@@ -100,7 +100,7 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
             clear = false;
         }
         //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
-        if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
+        if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(_fromY)][uint(i)] > 0){
             if(_figure == 8){
                 return false;            
             }
