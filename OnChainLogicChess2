@@ -72,9 +72,10 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
         //Wenn eine weiße(schlagbare) Figur im Weg steht, aus schwarzer Perspektive
         if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
             if(_figure == 8){
-                return false;            
-            clear = false;
+                return false;
             }
+            clear = false;
+            
         }
         }
         return true;
@@ -102,8 +103,8 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
         if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
             if(_figure == 8){
                 return false;            
-            clear = false;
             }
+            clear = false;
         }
     }    
     return true;
@@ -619,7 +620,7 @@ int _movePatternY;
     return false;
     }
     //King-schraeges Movement
-    if((_figure == 1 || _figure == 13) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1))) || (((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
+    if((_figure == 1 || _figure == 13)  && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
         
         if((_fromY - _toY == 1 || _fromY - _toY == -1) && (_fromX - _toX == 1 || _fromX - _toX == -1)){
         
