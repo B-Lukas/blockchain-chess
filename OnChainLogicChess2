@@ -518,10 +518,12 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }     
     //Bishop-Movement
     if((_figure == 3 || _figure == 11 ) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
+        if(_fromY + _toY == _fromX + _toX || (_fromY + _toY == (-1)*(_fromY + _fromX))){
         if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
             return true;
+        }
         }
         else{
             return false;
@@ -530,10 +532,12 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
   
     //Queen-Movement schräg
     if((_figure == 2 || _figure == 12) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
-        if(skewedMovment(_figure, _fromX, _fromY, _toY, _movePatternX, _movePatternY)){
+        if(_fromY + _toY == _fromX + _toX || (_fromY + _toY == (-1)*(_fromY + _fromX))){
+        if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;            
             return true;
+        }
         }
         else{
             return false;
