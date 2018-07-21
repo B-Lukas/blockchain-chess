@@ -1,5 +1,6 @@
 pragma solidity ^0.4.24;
 
+//TODO: Bauner wieder hinzufügen, Spielzüge speichern!, getMoves, rochade erst nach bestätigter bewegung
 contract Figures{
     
 int[8][8] Chessboard;
@@ -13,7 +14,7 @@ int testY;
 
 int[][]Zuege;
 
-function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
+function startGame() public returns(int[8][8]){ 
     
     gameID = gameID +1;
     
@@ -27,7 +28,7 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     Chessboard[7] = [9,10,11,12,13,11,10,9];
     
 /*
-    1 = WKing //Gerade aus funktiniert nicht
+    1 = WKing 
     2 = WQuenn
     3 = WBishop
     4 = WKnight
@@ -41,7 +42,7 @@ function startGame() public returns(int[8][8]){ //800k Gas to initialize Game
     11 = BBishop
     10 = BKnight
     9 = BRook
-    8 = BPawn //seitlich ging nicht
+    8 = BPawn 
 */
     return Chessboard;
 }
@@ -328,7 +329,9 @@ function speicherZueg(int _fromX,int _fromY,int _toX,int _toY) internal {
     Zuege[uint(gameID)].push(_toY);
 }   
     
-function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) public returns(bool){
+function legitMove(int _fromY, int _fromX, int _toY, int _toX) public returns(bool){
+    
+    int _figure = Chessboard[uint(_fromY)][uint(_fromX)];
     
     if(Chessboard[uint(_fromY)][uint(_fromX)] != _figure){
         return false;
@@ -401,8 +404,8 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
        }
     }    
     //Wenn der Turm nach vorne oder hinten geht
-    if(_figure == 5 || _figure == 9 && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
-        //Code, damit die Rochade nach der Bewegung vo
+    if((_figure == 5 || _figure == 9) && (_movePatternY == 1 || _movePatternY == -1) && _movePatternX == 0){
+        //Code, damit die Rochade nach der Bewegung nicht mehr geht
         if(_figure == 5 && _fromX == 0 && _fromY == 0){
             whiteLargeRochade = false;
         }
@@ -430,7 +433,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }
         
     //Seitliches Turm-Movement    
-    if(_figure == 5 || _figure == 9 && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
+    if((_figure == 5 || _figure == 9) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
         if(_figure == 5 && _fromX == 0 && _fromY == 0){
             whiteLargeRochade = false;
         }
@@ -518,7 +521,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     }     
     //Bishop-Movement
     if((_figure == 3 || _figure == 11 ) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
-        if(_fromY + _toY == _fromX + _toX || (_fromY + _toY == (-1)*(_fromY + _fromX))){
+        if(_fromY - _toY == _fromX - _toX || ((_fromY - _toY) == ((_fromX - _toX)*-1))){
         if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
@@ -532,7 +535,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
   
     //Queen-Movement schräg
     if((_figure == 2 || _figure == 12) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
-        if(_fromY + _toY == _fromX + _toX || (_fromY + _toY == (-1)*(_fromY + _fromX))){
+        if(_fromY - _toY == _fromX - _toX || ((_fromY - _toY) == ((_fromX - _toX)*-1))){
         if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;            
