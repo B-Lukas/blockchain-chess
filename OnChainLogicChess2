@@ -52,6 +52,9 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
     bool clear = true;
     if(_movePatternX == -1){
         for(int i = _fromX + _movePatternX; i >= _toX; i = i + _movePatternX){
+            if(clear == false){
+            return false;
+        }
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
         if(_figure < 7 && Chessboard[uint(_fromY)][uint(i)] > 0 && Chessboard[uint(_fromY)][uint(i)] < 7){
             //Sofortige invalidierung
@@ -81,19 +84,22 @@ function horizontalMovement(int _figure, int _fromY, int _fromX, int _toX, int _
         return true;
     }
     if(_movePatternX == 1){
-        for(int a = _fromX + _movePatternX; a <= _toX; a = a + _movePatternX){
+        for(i = _fromX + _movePatternX; i <= _toX; i = i + _movePatternX){
+            if(clear == false){
+            return false;
+        }
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Weiß)    
-        if(_figure < 7 && Chessboard[uint(_fromY)][uint(a)] > 0 && Chessboard[uint(_fromY)][uint(a)] < 7){
+        if(_figure < 7 && Chessboard[uint(_fromY)][uint(i)] > 0 && Chessboard[uint(_fromY)][uint(i)] < 7){
             //Sofortige invalidierung
             return false;
         }
         //Wenn eine gleichfarbige Spielfigur im Weg steht (Schwarz)
-        if(_figure > 7 && Chessboard[uint(_fromY)][uint(a)] > 7){ 
+        if(_figure > 7 && Chessboard[uint(_fromY)][uint(i)] > 7){ 
             //Sofortiger invalidierung
             return false;
         }
         //Wenn eine schwarze(schlagbare) Figur im Weg steht, aus weißer Perspektive
-        if(_figure > 0 && _figure < 7 && Chessboard[uint(_fromY)][uint(a)] > 7){
+        if(_figure > 0 && _figure < 7 && Chessboard[uint(_fromY)][uint(i)] > 7){
             if(_figure == 6){
                 return false;
             }
