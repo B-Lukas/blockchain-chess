@@ -202,11 +202,7 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
     //Schräg nach oben-rechts und oben-links
     if(_movePatternY == 1){
         for(i = _fromY + _movePatternY; i <= _toY; i = i + _movePatternY){
-         
             _fromX = _fromX + _movePatternX;
-            
-            testX = _fromX;
-            testY= i;
             
             if(clear == false){
             return false;
@@ -221,7 +217,7 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
             if(_figure > 7 && Chessboard[uint(i)][uint(_fromX)] < 7 ){
             clear == false;
             }
-            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
+            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7){
             clear == false;   
             }
         }
@@ -233,6 +229,9 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
         for(i = _fromY + _movePatternY; i >= _toY; i = i + _movePatternY){
             _fromX = _fromX + _movePatternX;
             
+            testX = _fromX;
+            testY= i;
+            
             if(clear == false){
             return false;
             }    
@@ -240,13 +239,13 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
             if(_figure > 7 && Chessboard[uint(i)][uint(_fromX)] > 7){
             return false;
             }
-            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] < 7){
+            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0 ){
             return false;   
             }
             if(_figure > 7 && Chessboard[uint(i)][uint(_fromX)] < 7){
             clear == false;
             }
-            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7){
+            if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7 ){
             clear == false;   
             }
         }
@@ -258,7 +257,7 @@ function skewedMovment(int _figure, int _fromY, int _fromX, int _toY, int _moveP
 function rochade(int _figure, int _toY, int _toX)public returns(bool){
     uint c = 0;
     //große Rochade
-    if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == true) || _figure == 13 && _toY == 7 && _toX == 2 && blackLargeRochade == true){
+    if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == true) ||( _figure == 13 && _toY == 7 && _toX == 2 && blackLargeRochade == true)){
         
         for(c = 1;c < 4 ;c++){
             if(_figure == 1){
@@ -288,7 +287,7 @@ function rochade(int _figure, int _toY, int _toX)public returns(bool){
         }        
     }   
     //kleine Rochade
-    if((_figure == 1 && _toY == 0 && _toX == 6 && whiteSmallRochade == true) || _figure == 13 && _toY == 7 && _toX == 6 && blackSmallRochade == true){
+    if((_figure == 1 && _toY == 0 && _toX == 6 && whiteSmallRochade == true) || (_figure == 13 && _toY == 7 && _toX == 6 && blackSmallRochade == true)){
         
         for(c = 5;c < 7;c++){
             if(_figure == 1){
@@ -615,7 +614,7 @@ function legitMove(int _figure, int _fromY, int _fromX, int _toY, int _toX) publ
     //King-schraeges Movement
     if((_figure == 1 || _figure == 13) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1))) || (((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
         
-        if(_fromY - _toY == 1 || _fromY - _toY == -1 && _fromX - _toX == 1 || _fromX - _toX == -1){
+        if((_fromY - _toY == 1 || _fromY - _toY == -1) && (_fromX - _toX == 1 || _fromX - _toX == -1)){
         
         if(_figure == 1 && _fromX == 5 && _fromY == 0){
             whiteLargeRochade = false;
