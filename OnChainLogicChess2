@@ -2,8 +2,6 @@ pragma solidity ^0.4.24;
 import "./Ownable.sol";
 contract Figures is Ownable{
     
-    //TODO: Test Rochade
-    
     int[8][8] Chessboard;
     bool whiteSmallRochade = true;
     bool blackSmallRochade = true;
@@ -12,7 +10,6 @@ contract Figures is Ownable{
     int gameID = -1;
     bool firstSave = false;
     uint[] arrayForStorage;
-
     uint[][]zuege;
 
     function startGame() public onlyOwner returns(int[8][8]){ 
@@ -216,10 +213,10 @@ contract Figures is Ownable{
                     return false;   
                 }
                 if(_figure > 7 && Chessboard[uint(i)][uint(_fromX)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
-                    clear == false;
+                    clear = false;
                 }
                 if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7){
-                    clear == false;   
+                    clear = false;   
                 }
             }
         }    
@@ -239,10 +236,10 @@ contract Figures is Ownable{
                     return false;   
                 }
                 if(_figure > 7 && Chessboard[uint(i)][uint(_fromX)] < 7 && Chessboard[uint(i)][uint(_fromX)] > 0){
-                    clear == false;
+                    clear = false;
                 }
                 if(_figure < 7 && Chessboard[uint(i)][uint(_fromX)] > 7 ){
-                    clear == false;   
+                    clear = false;   
                 }
             }
         
@@ -250,8 +247,12 @@ contract Figures is Ownable{
         return true;
     } 
     //Extra funktion für die Rochade
-    function rochade(int _figure, int _toY, int _toX)public onlyOwner returns(bool){
+    function rochade(int _fromY, int _fromX, int _toY, int _toX)public onlyOwner returns(bool){
         uint c = 0;
+        int _figure = Chessboard[uint(_fromY)][uint(_fromX)];
+        if(_figure == 0){
+            return false;
+        }
         //große Rochade
         if((_figure == 1 && _toY == 0 && _toX == 2 && whiteLargeRochade == true) ||( _figure == 13 && _toY == 7 && _toX == 2 && blackLargeRochade == true)){
         
@@ -270,15 +271,15 @@ contract Figures is Ownable{
             if(_figure == 1){  
                 Chessboard[0][0] = 0;
                 Chessboard[0][4] = 0;
-                Chessboard[0][6] = 1;
-                Chessboard[0][5] = 5;     
+                Chessboard[0][2] = 1;
+                Chessboard[0][3] = 5;     
                 return true;
             }
             if(_figure == 13){  
                 Chessboard[7][0] = 0;
                 Chessboard[7][4] = 0;
-                Chessboard[7][2] = 1;
-                Chessboard[7][3] = 5;   
+                Chessboard[7][2] = 13;
+                Chessboard[7][3] = 9;   
                 return true;
             }        
         }   
@@ -298,17 +299,17 @@ contract Figures is Ownable{
                 }            
             }
             if(_figure == 1){  
-                Chessboard[0][0] = 0;
+                Chessboard[0][7] = 0;
                 Chessboard[0][4] = 0;
-                Chessboard[0][2] = 1;
-                Chessboard[0][3] = 5;     
+                Chessboard[0][6] = 1;
+                Chessboard[0][5] = 5;     
                 return true;
             }
             if(_figure == 13){  
-                Chessboard[7][0] = 0;
+                Chessboard[7][7] = 0;
                 Chessboard[7][4] = 0;
-                Chessboard[7][2] = 1;
-                Chessboard[7][3] = 5;   
+                Chessboard[7][6] = 13;
+                Chessboard[7][5] = 9;   
                 return true;
             }        
         }     
@@ -371,36 +372,39 @@ contract Figures is Ownable{
             if(verticalMovement(_figure, _fromY, _fromX, _toY, _movePatternY) == true){ 
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
-                //ddToArray(_fromY, _fromX, _toY, _toX);
+                addToArray(_fromY, _fromX, _toY, _toX);
                 return true;
             }
         }
     
         //Bauer, wenn er eine Figure schlägt
-        if((_figure == 6 && _movePatternY == 1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] > 7 && _fromY - _toY == -1 &&_fromX - _toX == -1)||(_figure == 8 && _movePatternY == -1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] < 7 && _fromY - _toY == 1 && _fromX - _toX == 1)){
+        if((_figure == 6 && _movePatternY == 1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] > 7 && _fromY - _toY == -1 && (_fromX - _toX == -1 ||_fromX - _toX == 1))||(_figure == 8 && _movePatternY == -1 && (_movePatternX == 1 || _movePatternX == -1) && Chessboard[uint(_toY)][uint(_toX)] < 7 && _fromY - _toY == 1 && (_fromX - _toX == 1||_fromX - _toX == -1))){
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
-            Chessboard[uint(_toY)][uint(_toX)] = _figure;       
-        return true;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;     
+            addToArray(_fromY, _fromX, _toY, _toX);
+            return true;
         }
     
         //weißer Bauer, wenn er 2 Schritte macht von seiner Startposition
-        if(_figure == 6 && _fromY == 1 && _toY - _fromY == 2){
+        if(_figure == 6 && _fromY == 1 && _toY - _fromY == 2 && _movePatternX == 0){
             //Wenn das Feld vor dem Bauern und das Zielfeld frei sind: true
-            if(Chessboard[uint(_fromX + 1)][uint(_fromY + 1)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
+            if(Chessboard[uint(_fromY +1)][uint(_fromX)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                addToArray(_fromY, _fromX, _toY, _toX);
                 return true;
-        }
+            }
         else{
             return false;
         }
         }
         //schwarzer Bauer, wenn er 2 Schritte macht von seiner Startposition
-        if(_figure == 8 && _fromY == 6 && _toY - _fromY == -2){
+        if(_figure == 8 && _fromY == 6 && _toY - _fromY == -2 && _movePatternX == 0){
             //Wenn das Feld vor dem Bauern und das Zielfeld frei sind: true
-            if(Chessboard[uint(_fromX - 1)][uint(_fromY - 1)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
+            if(Chessboard[uint(_fromY -1)][uint(_fromX)] == 0 && Chessboard[uint(_toY)][uint(_toX)] == 0){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                addToArray(_fromY, _fromX, _toY, _toX);
                 return true;
         }
         else{
@@ -414,18 +418,19 @@ contract Figures is Ownable{
             if(verticalMovement(_figure, _fromX, _fromY,_toY, _movePatternY)){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
-            if(_figure == 5 && _fromX == 0 && _fromY == 0){
-                whiteLargeRochade = false;
-            }
-            if(_figure == 5 && _fromX == 7 && _fromY == 0){
-                whiteSmallRochade = false;
-            }
-            if(_figure == 9 && _fromX == 0 && _fromY == 7){
-                blackLargeRochade = false;
-            }
-            if(_figure == 9 && _fromX == 7 && _fromY == 7){
-                blackSmallRochade = false;
-            }       
+                addToArray(_fromY, _fromX, _toY, _toX);
+                if(_figure == 5 && _fromX == 0 && _fromY == 0){
+                    whiteLargeRochade = false;
+                }
+                if(_figure == 5 && _fromX == 7 && _fromY == 0){
+                    whiteSmallRochade = false;
+                }
+                if(_figure == 9 && _fromX == 0 && _fromY == 7){
+                 blackLargeRochade = false;
+                }
+                if(_figure == 9 && _fromX == 7 && _fromY == 7){
+                    blackSmallRochade = false;
+                }       
                 return true;
             }
             else{
@@ -439,6 +444,7 @@ contract Figures is Ownable{
             if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                addToArray(_fromY, _fromX, _toY, _toX);
             if(_figure == 5 && _fromX == 0 && _fromY == 0){
                 whiteLargeRochade = false;
             }
@@ -466,9 +472,10 @@ contract Figures is Ownable{
             }
             if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
                 return false;
-            }        
+            }
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
             Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            addToArray(_fromY, _fromX, _toY, _toX);
             return true;
         }
         //Pferd Bewegung nach unten-links und unten-rechts
@@ -480,11 +487,10 @@ contract Figures is Ownable{
             if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
                 return false;
             }        
-            else{
             Chessboard[uint(_fromY)][uint(_fromX)] = 0;
-                Chessboard[uint(_toY)][uint(_toX)] = _figure;
-                return true;
-            }
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            addToArray(_fromY, _fromX, _toY, _toX);
+            return true;
         }    
         //Pferd Bewegung nach links-oben und links-unten
         if((_figure == 4 || _figure == 10) && (_toY == _fromY + 1 || _toY == _fromY - 1) && _toX - _fromX == 2){
@@ -495,11 +501,10 @@ contract Figures is Ownable{
             if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
                 return false;
             }        
-            else{
-                Chessboard[uint(_fromY)][uint(_fromX)] = 0;
-                Chessboard[uint(_toY)][uint(_toX)] = _figure;
-                return true;
-            }
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            addToArray(_fromY, _fromX, _toY, _toX);
+            return true;
         }   
         //Pferd Bewegung nach rechts-oben und rechts-unten
         if((_figure == 4 || _figure == 10) && (_toY == _fromY + 1 || _toY == _fromY - 1) && _toX - _fromX == -2){
@@ -510,11 +515,10 @@ contract Figures is Ownable{
             if(_figure == 10 && Chessboard[uint(_toY)][uint(_toX)] > 7){
                 return false;
             }        
-            else{
-                Chessboard[uint(_fromY)][uint(_fromX)] = 0;
-                Chessboard[uint(_toY)][uint(_toX)] = _figure;
-                return true;
-            }
+            Chessboard[uint(_fromY)][uint(_fromX)] = 0;
+            Chessboard[uint(_toY)][uint(_toX)] = _figure;
+            addToArray(_fromY, _fromX, _toY, _toX);
+            return true;
         }     
         //Bishop-Movement
         if((_figure == 3 || _figure == 11 ) && ((_movePatternY == 1 && (_movePatternX == 1 || _movePatternX== -1)) || ((_movePatternY == -1 && (_movePatternX == 1 || _movePatternX== -1))))){
@@ -522,6 +526,7 @@ contract Figures is Ownable{
                 if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
                     Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                     Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                    addToArray(_fromY, _fromX, _toY, _toX);
                     return true;
                 }
             }
@@ -535,7 +540,8 @@ contract Figures is Ownable{
             if(_fromY - _toY == _fromX - _toX || ((_fromY - _toY) == ((_fromX - _toX)*-1))){
                 if(skewedMovment(_figure, _fromY, _fromX, _toY, _movePatternX, _movePatternY)){
                     Chessboard[uint(_fromY)][uint(_fromX)] = 0;
-                    Chessboard[uint(_toY)][uint(_toX)] = _figure;            
+                    Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                    addToArray(_fromY, _fromX, _toY, _toX);
                     return true;
                 }
             }
@@ -548,6 +554,7 @@ contract Figures is Ownable{
             if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                addToArray(_fromY, _fromX, _toY, _toX);
                 return true;
             }
             else{
@@ -559,28 +566,29 @@ contract Figures is Ownable{
             if(verticalMovement(_figure, _fromY, _fromX, _toY, _movePatternY)){
                 Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                 Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                addToArray(_fromY, _fromX, _toY, _toX);
                 return true;
             }
             else{
                 return false;
             }
         }      
-    
         //King-Movement horizontal
         if((_figure == 1 || _figure == 13) && _movePatternY == 0 && (_movePatternX == -1 || _movePatternX == 1)){
             //Filtern ob die Figur mehr als 2 Felder läuft
             if(_fromX - _toX == 1 || _fromX - _toX == -1){
-                if(_figure == 1 && _fromX == 5 && _fromY == 0){
-                    whiteLargeRochade = false;
-                    whiteSmallRochade = false;
-                }
-                if(_figure == 13 && _fromX == 5 && _fromY == 7){
-                    blackLargeRochade = false;
-                    blackSmallRochade = false;
-                }
                 if(horizontalMovement(_figure, _fromY, _fromX, _toX, _movePatternX)){
+                    if(_figure == 1 && _fromX == 5 && _fromY == 0){
+                        whiteLargeRochade = false;
+                        whiteSmallRochade = false;
+                    }
+                    if(_figure == 13 && _fromX == 5 && _fromY == 7){
+                        blackLargeRochade = false;
+                        blackSmallRochade = false;
+                    }                    
                     Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                     Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                    addToArray(_fromY, _fromX, _toY, _toX);
                     return true;
                 }
                 else{
@@ -593,17 +601,18 @@ contract Figures is Ownable{
             //Filtern ob die Figur mehr als 2 Felder läuft
             if(_fromY - _toY == 1 || _fromY - _toY == -1){
         
-                if(_figure == 1 && _fromX == 5 && _fromY == 0){
-                    whiteLargeRochade = false;
-                    whiteSmallRochade = false;
-                }
-                if(_figure == 13 && _fromX == 5 && _fromY == 7){
-                    blackLargeRochade = false;
-                    blackSmallRochade = false;
-                }
                 if(verticalMovement(_figure, _fromY, _fromX, _toY, _movePatternY)){
+                    if(_figure == 1 && _fromX == 5 && _fromY == 0){
+                        whiteLargeRochade = false;
+                        whiteSmallRochade = false;
+                    }
+                    if(_figure == 13 && _fromX == 5 && _fromY == 7){
+                        blackLargeRochade = false;
+                        blackSmallRochade = false;
+                    }                    
                     Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                     Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                    addToArray(_fromY, _fromX, _toY, _toX);
                     return true;
                 }
             }
@@ -614,19 +623,20 @@ contract Figures is Ownable{
         
             if((_fromY - _toY == 1 || _fromY - _toY == -1) && (_fromX - _toX == 1 || _fromX - _toX == -1)){
         
-                if(_figure == 1 && _fromX == 5 && _fromY == 0){
-                    whiteLargeRochade = false;
-                    whiteSmallRochade = false;
-                }
-                if(_figure == 13 && _fromX == 5 && _fromY == 7){
-                    blackLargeRochade = false;
-                    blackSmallRochade = false;
-                }
         
                 if(_fromY - _toY == _fromX - _toX || ((_fromY - _toY) == ((_fromX - _toX)*-1))){
                     if(skewedMovment(_figure, _fromY, _fromX, _toY,_movePatternX, _movePatternY)){
+                        if(_figure == 1 && _fromX == 5 && _fromY == 0){
+                            whiteLargeRochade = false;
+                            whiteSmallRochade = false;
+                        }
+                        if(_figure == 13 && _fromX == 5 && _fromY == 7){
+                            blackLargeRochade = false;
+                            blackSmallRochade = false;
+                        }
                         Chessboard[uint(_fromY)][uint(_fromX)] = 0;
                         Chessboard[uint(_toY)][uint(_toX)] = _figure;
+                        addToArray(_fromY, _fromX, _toY, _toX);
                         return true;
                     }
                 }
@@ -638,5 +648,6 @@ contract Figures is Ownable{
         else{
             return false;
         }
+  
     }
 }
